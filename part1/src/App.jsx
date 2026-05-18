@@ -21,21 +21,26 @@ const StatisticLine = ({ text, value }) => (
 );
 
 const Statistics = ({ good, neutral, bad }) => {
-  let total = good + neutral + bad;
-  let average = total === 0 ? 0 : (good - bad) / total;
-  let positive = total === 0 ? 0 : (good / total) * 100;
+  const total = good + neutral + bad;
 
-  return (
-    <div>
-      <h2>statistics</h2>
-      <StatisticLine text="good" value={good} />
-      <StatisticLine text="neutral" value={neutral} />
-      <StatisticLine text="bad" value={bad} />
-      <StatisticLine text="all" value={total} />
-      <StatisticLine text="average" value={average} />
-      <StatisticLine text="positive" value={positive} />
-    </div>
-  );
+  if (total !== 0) {
+    const average = (good - bad) / total;
+    const positive = (good / total) * 100;
+
+    return (
+      <div>
+        <h2>statistics</h2>
+        <StatisticLine text="good" value={good} />
+        <StatisticLine text="neutral" value={neutral} />
+        <StatisticLine text="bad" value={bad} />
+        <StatisticLine text="all" value={total} />
+        <StatisticLine text="average" value={average} />
+        <StatisticLine text="positive" value={positive} />
+      </div>
+    );
+  } else {
+    return <p>No feedback given</p>;
+  }
 };
 
 const App = () => {
@@ -44,6 +49,7 @@ const App = () => {
   const [neutral, setNeutral] = useState(0);
   const [bad, setBad] = useState(0);
 
+  // asynchronous update problem ?
   const handleGoodClick = () => setGood(good + 1);
   const handleNeutralClick = () => setNeutral(neutral + 1);
   const handleBadClick = () => setBad(bad + 1);
