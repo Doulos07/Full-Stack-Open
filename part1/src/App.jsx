@@ -1,72 +1,58 @@
-//Header, Content y Total.
-const Header = (props) => {
+import { useState } from "react";
+
+const Button = ({ onClick, text }) => {
+  return <button onClick={onClick}>{text}</button>;
+};
+
+const Buttons = ({ good, neutral, bad }) => {
   return (
     <>
-      <h1>{props.course.name}</h1>
+      <Button onClick={good} text="good" />
+      <Button onClick={neutral} text="neutral" />
+      <Button onClick={bad} text="bad" />
     </>
   );
 };
 
-const Part = (props) => {
-  console.log(props);
-  return (
-    <p>
-      {props.part} {props.exercises}
-    </p>
-  );
-};
+const StatisticLine = ({ text, value }) => (
+  <p>
+    {text} {value}
+  </p>
+);
 
-const Content = (props) => {
-  console.log(props);
-  let parts = props.course.parts.slice();
-  console.log("copy");
-  console.log(parts);
-  // How to implement foreach/map
+const Statistics = ({ good, neutral, bad }) => {
   return (
-    <>
-      <Part part={parts[0].name} exercises={parts[0].exercises} />
-      <Part part={parts[1].name} exercises={parts[1].exercises} />
-      <Part part={parts[2].name} exercises={parts[2].exercises} />
-    </>
-  );
-};
-
-const Total = (props) => {
-  let parts = props.course.parts.slice();
-  return (
-    <>
-      <p>
-        Number of exercises{" "}
-        {parts[0].exercises + parts[1].exercises + parts[2].exercises}
-      </p>
-    </>
+    <div>
+      <h2>statistics</h2>
+      <StatisticLine text="good" value={good} />
+      <StatisticLine text="neutral" value={neutral} />
+      <StatisticLine text="bad" value={bad} />
+    </div>
   );
 };
 
 const App = () => {
-  const course = {
-    name: "Half Stack application development",
-    parts: [
-      {
-        name: "Fundamentals of React",
-        exercises: 10,
-      },
-      {
-        name: "Using props to pass data",
-        exercises: 7,
-      },
-      {
-        name: "State of a component",
-        exercises: 14,
-      },
-    ],
-  };
+  // guarda los clics de cada botón en su propio estado
+  const [good, setGood] = useState(0);
+  const [neutral, setNeutral] = useState(0);
+  const [bad, setBad] = useState(0);
 
+  const handleGoodClick = () => setGood(good + 1);
+  const handleNeutralClick = () => setNeutral(neutral + 1);
+  const handleBadClick = () => setBad(bad + 1);
+
+  console.log("good:", good);
+  console.log("neutral:", neutral);
+  console.log("bad:", bad);
   return (
     <div>
-      <Header course={course} />
-      <Content course={course} />
-      <Total course={course} />
+      <h1>give feddback</h1>
+      <Buttons
+        good={handleGoodClick}
+        neutral={handleNeutralClick}
+        bad={handleBadClick}
+      />
+      <Statistics good={good} neutral={neutral} bad={bad} />
     </div>
   );
 };
