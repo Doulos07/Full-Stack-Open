@@ -21,12 +21,19 @@ const StatisticLine = ({ text, value }) => (
 );
 
 const Statistics = ({ good, neutral, bad }) => {
+  let total = good + neutral + bad;
+  let average = total === 0 ? 0 : (good - bad) / total;
+  let positive = total === 0 ? 0 : (good / total) * 100;
+
   return (
     <div>
       <h2>statistics</h2>
       <StatisticLine text="good" value={good} />
       <StatisticLine text="neutral" value={neutral} />
       <StatisticLine text="bad" value={bad} />
+      <StatisticLine text="all" value={total} />
+      <StatisticLine text="average" value={average} />
+      <StatisticLine text="positive" value={positive} />
     </div>
   );
 };
@@ -46,7 +53,7 @@ const App = () => {
   console.log("bad:", bad);
   return (
     <div>
-      <h1>give feddback</h1>
+      <h1>give feedback</h1>
       <Buttons
         good={handleGoodClick}
         neutral={handleNeutralClick}
