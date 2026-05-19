@@ -24,19 +24,32 @@ const App = () => {
 
   const size = anecdotes.length - 1;
 
+  // Create Array inizialt value [0,0,...]
+  const [votes, setVotes] = useState(Array(anecdotes.length).fill(0));
+  console.log("create Array votes:", votes);
+
   const [selected, setSelected] = useState(randomInt(0, size));
   console.log("lenght:", size, selected, anecdotes[selected]);
 
-  const handleClick = () => {
+  const handleNext = () => {
     const result = randomInt(0, size);
     console.log("result, randomInt:", result);
     setSelected(result);
   };
 
+  const handleVote = () => {
+    const newVote = [...votes];
+    newVote[selected] += 1;
+    console.log("Vote:", newVote);
+    setVotes(newVote);
+  };
+
   return (
     <div>
       <p>{anecdotes[selected]}</p>
-      <Button handleClick={handleClick} text="next anecdote" />
+      <p>has {votes[selected]} votes</p>
+      <Button handleClick={handleVote} text="vote" />
+      <Button handleClick={handleNext} text="next anecdote" />
     </div>
   );
 };
