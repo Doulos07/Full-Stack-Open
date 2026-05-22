@@ -1,4 +1,10 @@
-const Total = ({ total }) => <strong>total of {total} exercises</strong>;
+const Total = ({ parts }) => {
+  const total = parts.reduce((accumulator, currentItem) => {
+    return accumulator + currentItem.exercises;
+  }, 0);
+
+  return <strong>total of {total} exercises</strong>;
+};
 
 const Header = ({ text }) => <h1>{text}</h1>;
 
@@ -21,13 +27,11 @@ const Content = ({ parts }) => {
 };
 
 const Course = ({ course }) => {
-  const sumExercises = course.parts.map((part) => part.exercises);
-  console.log(sumExercises);
   return (
     <div>
       <Header text={course.name} />
       <Content parts={course.parts} />
-      <Total total={Math.sumPrecise(sumExercises)} />
+      <Total parts={course.parts} />
     </div>
   );
 };
