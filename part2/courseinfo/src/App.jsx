@@ -1,3 +1,5 @@
+const Total = ({ total }) => <strong>total of {total} exercises</strong>;
+
 const Header = ({ text }) => <h1>{text}</h1>;
 
 const Part = ({ name, exercises }) => {
@@ -19,10 +21,13 @@ const Content = ({ parts }) => {
 };
 
 const Course = ({ course }) => {
+  const sumExercises = course.parts.map((part) => part.exercises);
+  console.log(sumExercises);
   return (
     <div>
       <Header text={course.name} />
       <Content parts={course.parts} />
+      <Total total={Math.sumPrecise(sumExercises)} />
     </div>
   );
 };
@@ -46,6 +51,11 @@ const App = () => {
         name: "State of a component",
         exercises: 14,
         id: 3,
+      },
+      {
+        name: "Redux",
+        exercises: 11,
+        id: 4,
       },
     ],
   };
