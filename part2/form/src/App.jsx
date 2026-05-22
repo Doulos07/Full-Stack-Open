@@ -3,15 +3,28 @@ import Person from "./components/Person";
 
 const App = () => {
   const [persons, setPersons] = useState([
-    { id: 1, name: "Arto Hellas", number: "040-44-5323523" },
+    { name: "Arto Hellas", number: "040-123456", id: 1 },
+    { name: "Ada Lovelace", number: "39-44-5323523", id: 2 },
+    { name: "Dan Abramov", number: "12-43-234345", id: 3 },
+    { name: "Mary Poppendieck", number: "39-23-6423122", id: 4 },
   ]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
+  const [filter, setFilter] = useState("");
 
+  console.log("filtro:", filter);
+  console.log("data:", persons);
+  const dataList = persons.filter((person) =>
+    person.name.toLowerCase().includes(filter.toLowerCase()),
+  );
+
+  console.log(dataList);
   const addNewPerson = (event) => {
     event.preventDefault();
 
-    let isExist = persons.some((person) => person.name === newName);
+    let isExist = persons.some(
+      (person) => person.name.toLowerCase() === newName.toLowerCase(),
+    );
 
     if (!isExist) {
       const newperson = {
@@ -28,6 +41,10 @@ const App = () => {
     setNewNumber("");
   };
 
+  const handleFilterChange = (event) => {
+    setFilter(event.target.value);
+  };
+
   const handleNameChange = (event) => {
     setNewName(event.target.value);
   };
@@ -39,6 +56,12 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <form>
+        <div>
+          filter shown with
+          <input value={filter} onChange={handleFilterChange} />
+        </div>
+      </form>
       <form onSubmit={addNewPerson}>
         <div>
           name:
@@ -57,7 +80,7 @@ const App = () => {
       </div>
       <h2>Numbers</h2>
       <div>
-        {persons.map((person) => {
+        {dataList.map((person) => {
           return <Person key={person.id} person={person} />;
         })}
       </div>
