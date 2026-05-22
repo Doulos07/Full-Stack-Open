@@ -2,8 +2,11 @@ import { useState } from "react";
 import Person from "./components/Person";
 
 const App = () => {
-  const [persons, setPersons] = useState([{ id: 1, name: "Arto Hellas" }]);
+  const [persons, setPersons] = useState([
+    { id: 1, name: "Arto Hellas", number: "040-44-5323523" },
+  ]);
   const [newName, setNewName] = useState("");
+  const [newNumber, setNewNumber] = useState("");
 
   const addNewPerson = (event) => {
     event.preventDefault();
@@ -14,6 +17,7 @@ const App = () => {
       const newperson = {
         id: persons.length + 1,
         name: newName,
+        number: newNumber,
       };
       setPersons(persons.concat(newperson));
     } else {
@@ -21,10 +25,15 @@ const App = () => {
     }
 
     setNewName("");
+    setNewNumber("");
   };
 
-  const handlePersonChange = (event) => {
+  const handleNameChange = (event) => {
     setNewName(event.target.value);
+  };
+
+  const handleNumberChange = (event) => {
+    setNewNumber(event.target.value);
   };
 
   return (
@@ -33,13 +42,19 @@ const App = () => {
       <form onSubmit={addNewPerson}>
         <div>
           name:
-          <input value={newName} onChange={handlePersonChange} />
+          <input value={newName} onChange={handleNameChange} />
+        </div>
+        <div>
+          number:
+          <input value={newNumber} onChange={handleNumberChange} />
         </div>
         <div>
           <button type="submit">add</button>
         </div>
       </form>
-      <div>debug: {newName}</div>
+      <div>
+        debug: {newName} {newNumber}
+      </div>
       <h2>Numbers</h2>
       <div>
         {persons.map((person) => {
