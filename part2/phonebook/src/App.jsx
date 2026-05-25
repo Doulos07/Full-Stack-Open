@@ -1,54 +1,11 @@
-import { useState, useEffect, useEffectEvent } from "react";
-import Person from "./components/Person";
+import { useState, useEffect } from "react";
+import Persons from "./components/Persons";
+import PersonForm from "./components/PersonForm";
 import PersonService from "./services/persons";
+import Filter from "./components/Filter";
 
-const Filter = ({ filter, handleChange }) => {
-  return (
-    <div>
-      <form>
-        <div>
-          filter shown with
-          <input value={filter} onChange={handleChange} />
-        </div>
-      </form>
-    </div>
-  );
-};
-
-const PersonForm = ({
-  onSubmit,
-  newName,
-  handleNameChange,
-  newNumber,
-  handleNumberChange,
-}) => {
-  return (
-    <>
-      <form onSubmit={onSubmit}>
-        <div>
-          name:
-          <input value={newName} onChange={handleNameChange} />
-        </div>
-        <div>
-          number:
-          <input value={newNumber} onChange={handleNumberChange} />
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
-    </>
-  );
-};
-
-const Persons = ({ persons, handle }) => {
-  return (
-    <div>
-      {persons.map((person) => {
-        return <Person key={person.id} person={person} handle={handle} />;
-      })}
-    </div>
-  );
+const confirmAction = (message) => {
+  return window.confirm(`${message}`);
 };
 
 const App = () => {
@@ -57,12 +14,9 @@ const App = () => {
   const [newNumber, setNewNumber] = useState("");
   const [filter, setFilter] = useState("");
 
-  const hook = () => {
-    PersonService.getAll().then((response) => {
-      setPersons(response);
-    });
-  };
-  useEffect(hook, []);
+  useEffect(() => {
+    PersonService.getAll().then((response) => setPersons(response));
+  }, []);
 
   const dataList = persons.filter((person) =>
     person.name.toLowerCase().includes(filter.toLowerCase()),
@@ -85,10 +39,8 @@ const App = () => {
         setPersons(persons.concat(response));
       });
     } else {
-      const message =
-        "is already added to phonebook, replace the old number with a new one?";
-      const response = window.confirm(`${isExist.name} ${message}`);
-      if (response) {
+      const message = ` ${isExist.name} is already added to phonebook, replace the old number with a new one?`;
+      if (confirmAction(message)) {
         const updatePerson = { ...isExist, number: newNumber };
         PersonService.update(isExist.id, updatePerson).then((response) =>
           setPersons(
@@ -106,9 +58,7 @@ const App = () => {
 
   const handleDelete = (event) => {
     const person = persons.find((person) => person.id === event.target.value);
-    const message = `Delete ${person.name} ?`;
-    const response = window.confirm(message);
-    if (response) {
+    if (confirmAction(`Delete ${person.name} ?`)) {
       PersonService.deletePerson(person.id).then((response) => {
         setPersons(persons.filter((person) => person.id !== response.id));
       });
