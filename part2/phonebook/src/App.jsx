@@ -41,11 +41,11 @@ const PersonForm = ({
   );
 };
 
-const Persons = ({ persons }) => {
+const Persons = ({ persons, handle }) => {
   return (
     <div>
       {persons.map((person) => {
-        return <Person key={person.id} person={person} />;
+        return <Person key={person.id} person={person} handle={handle} />;
       })}
     </div>
   );
@@ -58,15 +58,12 @@ const App = () => {
   const [filter, setFilter] = useState("");
 
   const hook = () => {
-    console.log("saas");
     PersonService.getAll().then((response) => {
-      console.log(response);
       setPersons(response);
     });
   };
   useEffect(hook, []);
 
-  console.log("persons", persons);
   const dataList = persons.filter((person) =>
     person.name.toLowerCase().includes(filter.toLowerCase()),
   );
@@ -74,13 +71,12 @@ const App = () => {
   const addNewPerson = (event) => {
     event.preventDefault();
 
-    let isExist = persons.some(
+    let isExist = persons.find(
       (person) => person.name.toLowerCase() === newName.toLowerCase(),
     );
 
     if (!isExist) {
       const newperson = {
-        id: persons.length + 1,
         name: newName,
         number: newNumber,
       };
@@ -89,11 +85,34 @@ const App = () => {
         setPersons(persons.concat(response));
       });
     } else {
-      alert(`${newName} is already added to phonebook`);
+      const message =
+        "is already added to phonebook, replace the old number with a new one?";
+      const response = window.confirm(`${isExist.name} ${message}`);
+      if (response) {
+        const updatePerson = { ...isExist, number: newNumber };
+        PersonService.update(isExist.id, updatePerson).then((response) =>
+          setPersons(
+            persons.map((person) =>
+              person.id !== isExist.id ? person : updatePerson,
+            ),
+          ),
+        );
+      }
     }
 
     setNewName("");
     setNewNumber("");
+  };
+
+  const handleDelete = (event) => {
+    const person = persons.find((person) => person.id === event.target.value);
+    const message = `Delete ${person.name} ?`;
+    const response = window.confirm(message);
+    if (response) {
+      PersonService.deletePerson(person.id).then((response) => {
+        setPersons(persons.filter((person) => person.id !== response.id));
+      });
+    }
   };
 
   const handleFilterChange = (event) => {
@@ -123,7 +142,7 @@ const App = () => {
       />
 
       <h3>Numbers</h3>
-      <Persons persons={dataList} />
+      <Persons persons={dataList} handle={handleDelete} />
     </div>
   );
 };
