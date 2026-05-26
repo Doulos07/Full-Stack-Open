@@ -2,7 +2,6 @@ import { useState, useEffectEvent, useEffect, use } from "react";
 import countrySerives from "./services/countrys";
 import Countrys from "./components/Countrys";
 import Country from "./components/Country";
-import axios from "axios";
 
 const SearchCountry = ({ search, handleChange }) => {
   return (
@@ -19,6 +18,7 @@ const SearchCountry = ({ search, handleChange }) => {
 const App = () => {
   const [countrys, setCountrys] = useState([]);
   const [search, setSearch] = useState("");
+  const [selectCountry, setSelectCountry] = useState(null);
 
   let countryList = countrys.filter((country) =>
     country.name.common.toLowerCase().includes(search.toLowerCase()),
@@ -28,12 +28,9 @@ const App = () => {
     let name = countryList[0].name.common.toLowerCase();
     countrySerives
       .getCountry(name)
-      .then((response) => (countryList = response));
+      .then((response) => setSelectCountry(response));
   }
-  console.log(countryList);
-  if (!countryList) {
-    console.log("sin datos");
-  }
+
   useEffect(() => {
     countrySerives.getAll().then((response) => {
       setCountrys(response);
@@ -41,26 +38,33 @@ const App = () => {
   }, []);
 
   const handleSearch = (event) => {
-    console.log(event.target.value);
     setSearch(event.target.value);
+    setSelectCountry(null);
   };
 
+  const handleSelectCountry = (event) => {
+    const name = event.target.value;
+    console.log("name:", name);
+    countrySerives.getCountry(name).then((response) => {
+      console.log("response:", response);
+      setSelectCountry(response);
+    });
+  };
+
+  console.log("select:", selectCountry);
   return (
     <div>
       <h1>Countrys</h1>
       <SearchCountry search={search} handleChange={handleSearch} />
 
-      {search && countryList.length > 1 && countryList.length <= 10 && (
-        <Countrys countrys={countryList} />
-      )}
+      {selectCountry && <Country country={selectCountry} />}
 
-      {search && countryList.length > 10 && (
-        <p>Too many matches, specify another filter</p>
-      )}
-
-      {search && countryList.length === 1 && (
-        <Country country={countryList[0]} />
-      )}
+      {!selectCountry &&
+        (search && countryList.length <= 10 ? (
+          <Countrys countrys={countryList} handle={handleSelectCountry} />
+        ) : (
+          <p>Too many matches, specify another filter</p>
+        ))}
     </div>
   );
 };

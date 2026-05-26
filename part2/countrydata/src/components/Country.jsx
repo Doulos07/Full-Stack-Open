@@ -1,13 +1,11 @@
 const Language = ({ language }) => <li>{language}</li>;
 
 const Languages = ({ languages }) => {
-  console.log(languages);
   return (
     <ul>
-      {Object.entries(languages).map(([key, value]) => {
-        console.log("key: " + key + "\n" + "value: " + value);
-        return <Language key={key} language={value} />;
-      })}
+      {Object.entries(languages).map(([key, value]) => (
+        <Language key={key} language={value} />
+      ))}
     </ul>
   );
 };
