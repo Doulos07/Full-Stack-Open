@@ -3,6 +3,7 @@ import Persons from "./components/Persons";
 import PersonForm from "./components/PersonForm";
 import PersonService from "./services/persons";
 import Filter from "./components/Filter";
+import Notification from "./components/Notification";
 
 const confirmAction = (message) => {
   return window.confirm(`${message}`);
@@ -13,6 +14,10 @@ const App = () => {
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [filter, setFilter] = useState("");
+  const [message, setMessage] = useState({
+    message: null,
+    type: null,
+  });
 
   useEffect(() => {
     PersonService.getAll().then((response) => setPersons(response));
@@ -37,18 +42,36 @@ const App = () => {
 
       PersonService.create(newperson).then((response) => {
         setPersons(persons.concat(response));
+        setMessage({ message: `Added ${response.name}`, type: "success" });
+        setTimeout(() => {
+          setMessage({ message: null, type: null });
+        }, 5000);
       });
     } else {
       const message = ` ${isExist.name} is already added to phonebook, replace the old number with a new one?`;
       if (confirmAction(message)) {
         const updatePerson = { ...isExist, number: newNumber };
-        PersonService.update(isExist.id, updatePerson).then((response) =>
-          setPersons(
-            persons.map((person) =>
-              person.id !== isExist.id ? person : updatePerson,
-            ),
-          ),
-        );
+        PersonService.update(isExist.id, updatePerson)
+          .then((response) => {
+            setPersons(
+              persons.map((person) =>
+                person.id !== isExist.id ? person : response,
+              ),
+            );
+            setMessage({ message: `Added ${response.name}`, type: "success" });
+            setTimeout(() => {
+              setMessage({ message: null, type: null });
+            }, 5000);
+          })
+          .catch((error) => {
+            setMessage({
+              message: `Information of  ${isExist.name} has already been removed from server`,
+              type: "error",
+            });
+            setTimeout(() => {
+              setMessage({ message: null, type: null });
+            }, 5000);
+          });
       }
     }
 
@@ -79,9 +102,10 @@ const App = () => {
 
   return (
     <div>
-      <h2>Phonebook</h2>
+      <h1>Phonebook</h1>
       <Filter filter={filter} handleChange={handleFilterChange} />
 
+      <Notification message={message.message} type={message.type} />
       <h3>Add a new</h3>
       <PersonForm
         onSubmit={addNewPerson}
