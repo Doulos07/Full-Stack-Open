@@ -1,14 +1,5 @@
-const Language = ({ language }) => <li>{language}</li>;
-
-const Languages = ({ languages }) => {
-  return (
-    <ul>
-      {Object.entries(languages).map(([key, value]) => (
-        <Language key={key} language={value} />
-      ))}
-    </ul>
-  );
-};
+import Languages from "./Languages";
+import Meteorological from "./meteorological";
 
 const Country = ({ country }) => {
   return (
@@ -19,6 +10,7 @@ const Country = ({ country }) => {
       <h2>Languages</h2>
       <Languages languages={country.languages} />
       <img src={country.flags.png} alt={country.flags.alt} />
+      <Meteorological latlon={country.capitalInfo.latlng} />
     </>
   );
 };
