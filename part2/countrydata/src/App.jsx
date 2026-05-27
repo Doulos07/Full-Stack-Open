@@ -13,6 +13,7 @@ const App = () => {
   const [countrys, setCountrys] = useState([]);
   const [search, setSearch] = useState("");
   const [selectedName, setSelectedName] = useState(null);
+  const [activeCountry, setActiveCountry] = useState(null);
 
   useEffect(() => {
     countryServices.getAll().then(setCountrys);
@@ -22,11 +23,10 @@ const App = () => {
     country.name.common.toLowerCase().includes(search.toLowerCase()),
   );
 
+  // nullish
   const filterCountry =
     selectedName ??
     (countryList.length === 1 ? countryList[0].name.common : null);
-
-  const [activeCountry, setActiveCountry] = useState(null);
 
   useEffect(() => {
     if (!filterCountry) {
@@ -52,13 +52,14 @@ const App = () => {
       <h1>Countries</h1>
       <SearchCountry search={search} handleChange={handleSearch} />
 
+      {/* Single selected country */}
       {activeCountry ? (
         <Country country={activeCountry} />
-      ) : search && countryList.length <= 10 ? (
+      ) : /* 10 or fewer countries */ search && countryList.length <= 10 ? (
         <Countrys countrys={countryList} handle={handleSelectCountry} />
-      ) : (
+      ) : /* More than 10 countries */ search ? (
         <p>Too many matches, specify another filter</p>
-      )}
+      ) : null}
     </div>
   );
 };
