@@ -40,13 +40,17 @@ const App = () => {
         number: newNumber,
       };
 
-      PersonService.create(newperson).then((response) => {
-        setPersons(persons.concat(response));
-        setMessage({ message: `Added ${response.name}`, type: "success" });
-        setTimeout(() => {
-          setMessage({ message: null, type: null });
-        }, 5000);
-      });
+      PersonService.create(newperson)
+        .then((response) => {
+          setPersons(persons.concat(response));
+          setMessage({ message: `Added ${response.name}`, type: "success" });
+          setTimeout(() => {
+            setMessage({ message: null, type: null });
+          }, 5000);
+        })
+        .catch((error) => {
+          setMessage({ message: error.response.data.error, type: "error" });
+        });
     } else {
       const message = ` ${isExist.name} is already added to phonebook, replace the old number with a new one?`;
       if (confirmAction(message)) {
@@ -64,10 +68,7 @@ const App = () => {
             }, 5000);
           })
           .catch((error) => {
-            setMessage({
-              message: `Information of  ${isExist.name} has already been removed from server`,
-              type: "error",
-            });
+            setMessage({ message: error.response.data.error, type: "error" });
             setTimeout(() => {
               setMessage({ message: null, type: null });
             }, 5000);
